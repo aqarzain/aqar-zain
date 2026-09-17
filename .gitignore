@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Backups
+*.sql
+database/backups/*.sql
+
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+*.apk
+*.aab
+*.keystore
+
+# Website
+website/.next/
+website/out/
+website/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
