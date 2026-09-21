@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://aqarzain.github.io/aqar-zain/sitemap-index.xml

@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="الصفحة غير موجودة | عقار زين"
+  description="الصفحة التي تبحث عنها غير موجودة"
+  noindex={true}
+>
+  <div class="min-h-[70vh] flex items-center justify-center bg-gray-50">
+    <div class="text-center px-4 max-w-md">
+
+      <div class="text-7xl mb-4">🏚️</div>
+
+      <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-3">
+        404
+      </h1>
+
+      <h2 class="text-lg font-bold text-gray-700 mb-3">
+        الصفحة غير موجودة
+      </h2>
+
+      <p class="text-xs text-gray-500 mb-6 leading-6">
+        عذراً، الصفحة التي تبحث عنها غير متوفرة أو تم نقلها.
+        يمكنك العودة للرئيسية أو تصفح العقارات المتاحة.
+      </p>
+
+      <div class="flex flex-wrap gap-2 justify-center">
+        <a
+          href="/aqar-zain/"
+          class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg shadow transition"
+        >
+          🏠 الرئيسية
+        </a>
+        <a
+          href="/aqar-zain/properties/"
+          class="px-4 py-2 bg-white border border-gray-200 hover:border-blue-500 hover:text-blue-600 text-gray-700 text-sm font-bold rounded-lg transition"
+        >
+          🏢 العقارات
+        </a>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>

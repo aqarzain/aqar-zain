@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PropertyCard from '../../components/PropertyCard.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+
+// ============================================================
+// getStaticPaths - كل شيء داخلها
+// ============================================================
+export async function getStaticPaths() {
+  const API_URL = 'http://localhost:3000';
+
+  async function fetchWithRetry(url: string, maxRetries = 3): Promise<any> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const res = await fetch(url);
+        if (res.ok) return res.json();
+
+        if (res.status === 429) {
+          await new Promise((r) => setTimeout(r, 1000 * attempt));
+          continue;
+        }
+        return null;
+      } catch (e) {
+        if (attempt === maxRetries) return null;
+        await new Promise((r) => setTimeout(r, 500));
+      }
+    }
+    return null;
+  }
+
+  console.log('🔍 [areas] جلب المناطق من:', API_URL);
+
+  const data = await fetchWithRetry(`${API_URL}/api/areas`);
+
+  if (!data || !data.data) {
+    console.warn('⚠️ [areas] لم يتم جلب مناطق');
+    return [];
+  }
+
+  const areas = data.data;
+  console.log(`✅ [areas] تم جلب ${areas.length} منطقة`);
+
+  // أول 30 منطقة فقط
+  const limitedAreas = areas.slice(0, 30);
+
+  return limitedAreas.map((a: any) => ({
+    params: { id: String(a.id) },
+  }));
+}
+
+// ============================================================
+// باقي الصفحة
+// ============================================================
+const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+const { id } = Astro.params;
+
+let area: any = null;
+
+try {
+  const res = await fetch(`${API_URL}/api/areas/${id}`);
+  if (res.ok) {
+    const data = await res.json();
+    area = data.data;
+  }
+} catch (e) { console.error(e); }
+
+if (!area) {
+  return Astro.redirect('/aqar-zain/areas/');
+}
+
+let properties: any[] = [];
+try {
+  const res = await fetch(`${API_URL}/api/properties?area_id=${id}&limit=100`);
+  if (res.ok) {
+    const data = await res.json();
+    properties = data.data || [];
+  }
+} catch (e) { console.error(e); }
+
+const areaName = area.name || area.locality || 'منطقة';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Place',
+  name: areaName,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: area.city || 'الإسماعيلية',
+    addressCountry: 'EG',
+  },
+};
+---
+
+<BaseLayout
+  title={`${areaName} | عقار زين`}
+  description={`العقارات المتاحة في ${areaName} - ${properties.length} عقار`}
+  jsonLd={jsonLd}
+>
+  <div class="bg-gray-50 min-h-screen">
+
+    <div class="bg-gradient-to-l from-blue-700 via-blue-600 to-blue-800 text-white">
+      <div class="container mx-auto px-4 py-6 md:py-8">
+        <Breadcrumbs
+          items={[
+            { href: '/aqar-zain/', label: 'الرئيسية' },
+            { href: '/aqar-zain/areas/', label: 'المناطق' },
+            { label: areaName },
+          ]}
+          variant="hero"
+        />
+        <h1 class="text-xl md:text-2xl font-extrabold mb-1.5">📍 {areaName}</h1>
+        {area.city && (
+          <p class="text-blue-100 text-xs md:text-sm">{area.city}</p>
+        )}
+
+        <div class="mt-4 inline-block bg-white/10 backdrop-blur-sm rounded-lg p-2.5 border border-white/20">
+          <div class="text-lg font-extrabold text-white">{properties.length}</div>
+          <div class="text-[10px] text-blue-100">عقار متاح</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-6">
+
+      {properties.length > 0 ? (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {properties.map((property) => (
+            <PropertyCard property={property} />
+          ))}
+        </div>
+      ) : (
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center max-w-md mx-auto">
+          <div class="text-4xl mb-3">🏢</div>
+          <h3 class="text-base font-bold text-gray-800 mb-1">لا توجد عقارات</h3>
+          <p class="text-xs text-gray-500 mb-4">لا توجد عقارات متاحة في هذه المنطقة حالياً</p>
+          <a
+            href="/aqar-zain/properties/"
+            class="inline-block px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg shadow transition"
+          >
+            تصفح كل العقارات
+          </a>
+        </div>
+      )}
+
+    </div>
+  </div>
+</BaseLayout>

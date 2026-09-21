@@ -1,0 +1,221 @@
+---
+interface Area {
+  id: number;
+  name: string;
+}
+
+interface Props {
+  areas: Area[];
+  selectedType?: string;
+  selectedArea?: string;
+  selectedOffer?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  selectedRooms?: string;
+  selectedFinishing?: string;
+}
+
+const {
+  areas = [],
+  selectedType = '',
+  selectedArea = '',
+  selectedOffer = '',
+  minPrice = '',
+  maxPrice = '',
+  selectedRooms = '',
+  selectedFinishing = '',
+} = Astro.props;
+
+const propertyTypes = [
+  { value: '', label: 'كل الأنواع' },
+  { value: 'شقة', label: 'شقة' },
+  { value: 'منزل', label: 'منزل' },
+  { value: 'فيلا', label: 'فيلا' },
+  { value: 'محل', label: 'محل تجاري' },
+  { value: 'أرض', label: 'أرض' },
+  { value: 'مكتب', label: 'مكتب' },
+  { value: 'مستودع', label: 'مستودع' },
+];
+
+const offerTypes = [
+  { value: '', label: 'الكل' },
+  { value: 'بيع', label: 'بيع' },
+  { value: 'إيجار', label: 'إيجار' },
+];
+
+const roomsOptions = [
+  { value: '', label: 'الكل' },
+  { value: '1', label: '1+' },
+  { value: '2', label: '2+' },
+  { value: '3', label: '3+' },
+  { value: '4', label: '4+' },
+  { value: '5', label: '5+' },
+];
+
+const finishingOptions = [
+  { value: '', label: 'الكل' },
+  { value: 'بدون تشطيب', label: 'بدون تشطيب' },
+  { value: 'نصف تشطيب', label: 'نصف تشطيب' },
+  { value: 'لوكس', label: 'لوكس' },
+  { value: 'سوبر لوكس', label: 'سوبر لوكس' },
+];
+
+const priceRanges = [
+  { label: 'أقل من 500 ألف', min: '', max: '500000' },
+  { label: '500 ألف - 1 مليون', min: '500000', max: '1000000' },
+  { label: '1 - 3 مليون', min: '1000000', max: '3000000' },
+  { label: '3 - 5 مليون', min: '3000000', max: '5000000' },
+  { label: '5 - 10 مليون', min: '5000000', max: '10000000' },
+  { label: 'أكثر من 10 مليون', min: '10000000', max: '' },
+];
+
+const hasActiveFilters = Boolean(
+  selectedType || selectedArea || selectedOffer ||
+  minPrice || maxPrice || selectedRooms || selectedFinishing
+);
+---
+
+<aside class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sticky top-20">
+  <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+    <h2 class="text-sm font-bold text-gray-800 flex items-center gap-1.5">
+      <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
+      </svg>
+      الفلاتر
+    </h2>
+    {hasActiveFilters && (
+      <a href="/aqar-zain/properties/" class="text-[11px] text-red-600 hover:text-red-700 font-medium">
+        مسح الكل
+      </a>
+    )}
+  </div>
+
+  <form id="filters-form" method="GET" action="/aqar-zain/properties/" class="space-y-4">
+
+    <div>
+      <label class="block text-xs font-bold text-gray-700 mb-1.5">نوع العقار</label>
+      <select name="type" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition text-xs bg-white">
+        {propertyTypes.map((t) => (
+          <option value={t.value} selected={selectedType === t.value}>{t.label}</option>
+        ))}
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-xs font-bold text-gray-700 mb-1.5">نوع العرض</label>
+      <div class="grid grid-cols-3 gap-1">
+        {offerTypes.map((o) => (
+          <label class={`text-center py-1.5 rounded-lg border cursor-pointer transition text-[11px] font-medium ${
+            selectedOffer === o.value
+              ? 'border-blue-500 bg-blue-50 text-blue-700'
+              : 'border-gray-200 hover:border-gray-300 text-gray-700'
+          }`}>
+            <input type="radio" name="offer" value={o.value} checked={selectedOffer === o.value} class="hidden" />
+            {o.label}
+          </label>
+        ))}
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-xs font-bold text-gray-700 mb-1.5">المنطقة</label>
+      <select name="area" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition text-xs bg-white">
+        <option value="">كل المناطق</option>
+        {areas.map((a) => (
+          <option value={a.id} selected={String(selectedArea) === String(a.id)}>{a.name}</option>
+        ))}
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-xs font-bold text-gray-700 mb-1.5">عدد الغرف</label>
+      <select name="rooms" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition text-xs bg-white">
+        {roomsOptions.map((r) => (
+          <option value={r.value} selected={selectedRooms === r.value}>{r.label}</option>
+        ))}
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-xs font-bold text-gray-700 mb-1.5">نوع التشطيب</label>
+      <select name="finishing" class="w-full px-2.5 py-1.5 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition text-xs bg-white">
+        {finishingOptions.map((f) => (
+          <option value={f.value} selected={selectedFinishing === f.value}>{f.label}</option>
+        ))}
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-xs font-bold text-gray-700 mb-1.5">نطاق السعر</label>
+      <div class="grid grid-cols-2 gap-1.5">
+        <input
+          type="number"
+          name="min_price"
+          placeholder="من"
+          value={minPrice}
+          class="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-xs"
+        />
+        <input
+          type="number"
+          name="max_price"
+          placeholder="إلى"
+          value={maxPrice}
+          class="w-full px-2 py-1.5 border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-xs"
+        />
+      </div>
+      <div class="mt-1.5 space-y-0.5">
+        {priceRanges.map((r) => (
+          <button
+            type="button"
+            data-min={r.min}
+            data-max={r.max}
+            class="price-range-btn block w-full text-right text-[11px] px-2 py-1 rounded hover:bg-blue-50 text-gray-600 hover:text-blue-700 transition"
+          >
+            {r.label}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-2 rounded-lg shadow hover:shadow-md transition-all text-xs flex items-center justify-center gap-1.5"
+    >
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      تطبيق الفلاتر
+    </button>
+
+  </form>
+</aside>
+
+<script>
+  document.querySelectorAll('.price-range-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const min = (btn as HTMLElement).dataset.min || '';
+      const max = (btn as HTMLElement).dataset.max || '';
+      const minInput = document.querySelector('input[name="min_price"]') as HTMLInputElement;
+      const maxInput = document.querySelector('input[name="max_price"]') as HTMLInputElement;
+      if (minInput) minInput.value = min;
+      if (maxInput) maxInput.value = max;
+    });
+  });
+
+  document.querySelectorAll('input[name="offer"]').forEach((radio) => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('input[name="offer"]').forEach((r) => {
+        const label = r.closest('label');
+        if (label) {
+          if ((r as HTMLInputElement).checked) {
+            label.classList.add('border-blue-500', 'bg-blue-50', 'text-blue-700');
+            label.classList.remove('border-gray-200', 'text-gray-700');
+          } else {
+            label.classList.remove('border-blue-500', 'bg-blue-50', 'text-blue-700');
+            label.classList.add('border-gray-200', 'text-gray-700');
+          }
+        }
+      });
+    });
+  });
+</script>

@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+
+const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+
+const toNum = (v: any) => {
+  if (v === null || v === undefined) return 0;
+  const n = typeof v === 'string' ? parseFloat(v) : v;
+  return isNaN(n) ? 0 : n;
+};
+
+let areas: any[] = [];
+let grouped: Record<string, any[]> = {};
+
+try {
+  const res = await fetch(`${API_URL}/api/areas`);
+  if (res.ok) {
+    const data = await res.json();
+    areas = data.data || [];
+  }
+} catch (e) {
+  console.error('فشل جلب المناطق:', e);
+}
+
+// تجميع المناطق حسب المدينة
+for (const area of areas) {
+  const city = area.city || 'مناطق أخرى';
+  if (!grouped[city]) grouped[city] = [];
+  grouped[city].push(area);
+}
+
+const cities = Object.keys(grouped);
+---
+
+<BaseLayout
+  title="المناطق | عقار زين"
+  description="تصفح العقارات حسب المنطقة في الإسماعيلية ومصر"
+>
+  <div class="bg-gray-50 min-h-screen">
+
+    <!-- Hero -->
+    <div class="bg-gradient-to-l from-blue-700 via-blue-600 to-blue-800 text-white">
+      <div class="container mx-auto px-4 py-6 md:py-8">
+        <Breadcrumbs
+          items={[
+            { href: '/aqar-zain/', label: 'الرئيسية' },
+            { label: 'المناطق' },
+          ]}
+          variant="hero"
+        />
+        <h1 class="text-xl md:text-2xl font-extrabold mb-1.5">المناطق</h1>
+        <p class="text-blue-100 text-xs md:text-sm">
+          اكتشف العقارات حسب المنطقة
+        </p>
+
+        <div class="grid grid-cols-2 gap-2 md:gap-3 mt-4 max-w-md">
+          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-2.5 border border-white/20">
+            <div class="text-lg md:text-xl font-extrabold text-white">{areas.length}</div>
+            <div class="text-[10px] md:text-xs text-blue-100 mt-0.5">منطقة</div>
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-2.5 border border-white/20">
+            <div class="text-lg md:text-xl font-extrabold text-white">{cities.length}</div>
+            <div class="text-[10px] md:text-xs text-blue-100 mt-0.5">مدينة</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-6">
+
+      {cities.length > 0 ? (
+        <div class="space-y-6">
+          {cities.map((city) => (
+            <section>
+              <h2 class="text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <span class="w-1 h-4 bg-blue-600 rounded"></span>
+                {city}
+                <span class="text-xs text-gray-400 font-normal">({grouped[city].length} منطقة)</span>
+              </h2>
+
+              <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                {grouped[city].map((area) => (
+                  <a
+                    href={`/aqar-zain/areas/${area.id}`}
+                    class="group bg-white rounded-lg shadow-sm border border-gray-100 p-3 hover:shadow-md hover:border-blue-300 hover:-translate-y-0.5 transition-all"
+                  >
+                    <div class="w-8 h-8 bg-blue-50 group-hover:bg-blue-600 rounded-lg flex items-center justify-center mb-2 transition-colors">
+                      <svg class="w-4 h-4 text-blue-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      </svg>
+                    </div>
+                    <div class="text-xs font-bold text-gray-800 group-hover:text-blue-600 transition line-clamp-1">
+                      {area.name}
+                    </div>
+                    {area.district && (
+                      <div class="text-[10px] text-gray-500 mt-0.5 line-clamp-1">
+                        {area.district}
+                      </div>
+                    )}
+                  </a>
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      ) : (
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+          <div class="text-4xl mb-3">📍</div>
+          <h3 class="text-base font-bold text-gray-800 mb-1">لا توجد مناطق</h3>
+          <p class="text-xs text-gray-500">لم تتم إضافة مناطق بعد</p>
+        </div>
+      )}
+
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,46 @@
+---
+interface Props {
+  phone?: string;
+  whatsapp?: string;
+  propertyTitle?: string;
+}
+
+const {
+  phone = '01281441854',
+  whatsapp = '01281441854',
+  propertyTitle = 'عقار'
+} = Astro.props;
+
+const whatsappMessage = encodeURIComponent(`مرحباً، أريد الاستفسار عن: ${propertyTitle}`);
+const whatsappLink = `https://wa.me/2${whatsapp}?text=${whatsappMessage}`;
+const phoneLink = `tel:${phone}`;
+---
+
+<div class="space-y-3">
+  <a
+    href={whatsappLink}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="flex items-center justify-center gap-3 w-full bg-green-500 text-white py-4 rounded-xl font-bold text-lg hover:bg-green-600 transition shadow-lg"
+  >
+    <span class="text-2xl">💬</span>
+    <span>تواصل عبر واتساب</span>
+  </a>
+
+  <a
+    href={phoneLink}
+    class="flex items-center justify-center gap-3 w-full bg-primary-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-primary-700 transition shadow-lg"
+  >
+    <span class="text-2xl">📞</span>
+    <span>اتصل الآن</span>
+  </a>
+
+  <button
+    type="button"
+    onclick="navigator.clipboard.writeText(window.location.href); alert('تم نسخ الرابط!')"
+    class="flex items-center justify-center gap-3 w-full bg-slate-100 text-slate-700 py-3 rounded-xl font-semibold hover:bg-slate-200 transition"
+  >
+    <span>🔗</span>
+    <span>مشاركة العقار</span>
+  </button>
+</div>

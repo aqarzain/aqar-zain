@@ -1,0 +1,114 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+---
+
+<BaseLayout
+  title="من نحن | عقار زين"
+  description="تعرف على عقار زين - منصة عقارية ذكية في الإسماعيلية ومصر"
+>
+  <div class="bg-gray-50 min-h-screen">
+
+    <!-- Hero -->
+    <div class="bg-gradient-to-l from-blue-700 via-blue-600 to-blue-800 text-white">
+      <div class="container mx-auto px-4 py-6 md:py-8">
+        <Breadcrumbs
+          items={[
+            { href: '/aqar-zain/', label: 'الرئيسية' },
+            { label: 'من نحن' },
+          ]}
+          variant="hero"
+        />
+        <h1 class="text-xl md:text-2xl font-extrabold mb-1.5">من نحن</h1>
+        <p class="text-blue-100 text-xs md:text-sm">
+          تعرف على قصتنا ورؤيتنا في عالم العقارات
+        </p>
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-6 max-w-4xl">
+
+      <!-- القصة -->
+      <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6 mb-5">
+        <h2 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+          <span class="w-1 h-5 bg-blue-600 rounded"></span>
+          قصتنا
+        </h2>
+        <p class="text-sm text-gray-600 leading-7 mb-3">
+          <strong class="text-blue-600">عقار زين</strong> هي منصة عقارية ذكية متكاملة، انطلقت من الإسماعيلية بمصر،
+          بهدف تبسيط عملية البحث عن العقارات وجعلها أكثر شفافية واحترافية.
+        </p>
+        <p class="text-sm text-gray-600 leading-7">
+          نعتمد على تقنيات الذكاء الاصطناعي لتقدير أسعار العقارات بدقة، وتحليل السوق المحلي،
+          وتقديم استشارات عقارية موثوقة لكل من يبحث عن استثمار آمن أو منزل أحلامه.
+        </p>
+      </section>
+
+      <!-- الرؤية والرسالة -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+          <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-3 text-xl">
+            🎯
+          </div>
+          <h3 class="text-base font-bold text-gray-800 mb-2">رؤيتنا</h3>
+          <p class="text-xs text-gray-600 leading-6">
+            أن نكون المنصة العقارية الأولى في مصر، والمعيار الذي يحتكم إليه الجميع
+            عند البحث عن عقار أو استثمار.
+          </p>
+        </section>
+
+        <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+          <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-3 text-xl">
+            🚀
+          </div>
+          <h3 class="text-base font-bold text-gray-800 mb-2">رسالتنا</h3>
+          <p class="text-xs text-gray-600 leading-6">
+            تقديم خدمة عقارية شفافة وموثوقة، مدعومة بأحدث التقنيات،
+            مع الالتزام بأعلى معايير الجودة والمصداقية.
+          </p>
+        </section>
+      </div>
+
+      <!-- قيمنا -->
+      <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6 mb-5">
+        <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <span class="w-1 h-5 bg-blue-600 rounded"></span>
+          قيمنا
+        </h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div class="text-center p-3 bg-gray-50 rounded-lg">
+            <div class="text-2xl mb-2">🤝</div>
+            <div class="text-xs font-bold text-gray-800">الثقة</div>
+          </div>
+          <div class="text-center p-3 bg-gray-50 rounded-lg">
+            <div class="text-2xl mb-2">✨</div>
+            <div class="text-xs font-bold text-gray-800">الشفافية</div>
+          </div>
+          <div class="text-center p-3 bg-gray-50 rounded-lg">
+            <div class="text-2xl mb-2">⚡</div>
+            <div class="text-xs font-bold text-gray-800">السرعة</div>
+          </div>
+          <div class="text-center p-3 bg-gray-50 rounded-lg">
+            <div class="text-2xl mb-2">🎯</div>
+            <div class="text-xs font-bold text-gray-800">الدقة</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <div class="bg-gradient-to-l from-blue-600 to-blue-800 rounded-xl p-5 md:p-6 text-white text-center">
+        <h3 class="text-lg font-bold mb-2">جاهز تبدأ رحلتك العقارية؟</h3>
+        <p class="text-xs text-blue-100 mb-4">تصفح العقارات أو تواصل معنا مباشرة</p>
+        <div class="flex flex-wrap justify-center gap-2">
+          <a href="/aqar-zain/properties/" class="px-4 py-2 bg-white text-blue-700 text-sm font-bold rounded-lg hover:bg-blue-50 transition">
+            تصفح العقارات
+          </a>
+          <a href="/aqar-zain/contact/" class="px-4 py-2 bg-blue-700 text-white text-sm font-bold rounded-lg hover:bg-blue-800 transition border border-blue-500">
+            تواصل معنا
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>

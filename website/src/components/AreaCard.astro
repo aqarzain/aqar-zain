@@ -1,0 +1,97 @@
+---
+import { formatPrice, type Area } from '../lib/api';
+
+interface Props {
+  area: Area;
+}
+
+const { area } = Astro.props;
+---
+
+<a
+  href={`/aqar-zain/properties/?area_id=${area.id}`}
+  class="block bg-white rounded-xl shadow-md overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group"
+>
+  <!-- Header Background -->
+  <div class="relative bg-gradient-to-br from-gold-500 to-gold-600 h-24 flex items-center justify-center overflow-hidden">
+    <span class="text-6xl group-hover:scale-110 transition-transform duration-300">📍</span>
+
+    <!-- Popular Badge -->
+    {area.is_popular && (
+      <div class="absolute top-3 right-3 bg-white/95 text-gold-700 text-xs font-bold px-3 py-1 rounded-full">
+        ⭐ منطقة مميزة
+      </div>
+    )}
+  </div>
+
+  <!-- Content -->
+  <div class="p-5">
+    <!-- Name -->
+    <h3 class="font-bold text-xl text-slate-800 mb-2 group-hover:text-primary-700 transition">
+      {area.locality}
+    </h3>
+
+    <!-- Location Details -->
+    <div class="space-y-1 text-sm text-slate-600 mb-4">
+      <div class="flex items-center gap-2">
+        <span>🏙️</span>
+        <span>{area.city}</span>
+      </div>
+      {area.administrative_area && (
+        <div class="flex items-center gap-2">
+          <span>🏛️</span>
+          <span>{area.administrative_area}</span>
+        </div>
+      )}
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 gap-3 mb-4">
+      <div class="bg-slate-50 p-3 rounded-lg text-center">
+        <div class="text-2xl font-bold text-primary-700">
+          {area.property_count}
+        </div>
+        <div class="text-xs text-slate-500">عقار</div>
+      </div>
+      {area.avg_price && (
+        <div class="bg-slate-50 p-3 rounded-lg text-center">
+          <div class="text-sm font-bold text-gold-600">
+            {formatPrice(area.avg_price)}
+          </div>
+          <div class="text-xs text-slate-500">متوسط السعر</div>
+        </div>
+      )}
+    </div>
+
+    <!-- Facilities -->
+    {(area.has_school || area.has_hospital || area.has_metro) && (
+      <div class="flex flex-wrap gap-2 mb-4">
+        {area.has_school && (
+          <span class="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded-full">
+            🏫 مدارس
+          </span>
+        )}
+        {area.has_hospital && (
+          <span class="text-xs bg-red-50 text-red-700 px-2 py-1 rounded-full">
+            🏥 مستشفيات
+          </span>
+        )}
+        {area.has_metro && (
+          <span class="text-xs bg-green-50 text-green-700 px-2 py-1 rounded-full">
+            🚇 مترو
+          </span>
+        )}
+      </div>
+    )}
+
+    <!-- CTA -->
+    <div class="border-t pt-4 flex items-center justify-between">
+      <span class="text-sm font-semibold text-primary-700">
+        عرض العقارات
+      </span>
+      <span class="text-primary-600 group-hover:translate-x-[-4px] transition">
+        ←
+      </span>
+    </div>
+  </div>
+</a>

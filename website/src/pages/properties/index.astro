@@ -1,0 +1,272 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PropertyCard from '../../components/PropertyCard.astro';
+import PropertyFilters from '../../components/PropertyFilters.astro';
+import Pagination from '../../components/Pagination.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+
+const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+const PER_PAGE = 12;
+
+const url = new URL(Astro.request.url);
+const params = url.searchParams;
+
+// قراءة الفلاتر (بدعم الأسماء الجديدة + القديمة)
+const type = params.get('type') || params.get('category') || '';
+const area = params.get('area') || params.get('area_id') || '';
+const offer = params.get('offer') || params.get('listing_type') || '';
+const minPrice = params.get('min_price') || '';
+const maxPrice = params.get('max_price') || '';
+const rooms = params.get('rooms') || params.get('bedrooms') || '';
+const finishing = params.get('finishing') || params.get('finishing_type') || '';
+const q = params.get('q') || '';
+const sort = params.get('sort') || 'newest';
+const page = parseInt(params.get('page') || '1') || 1;
+
+const toNum = (v: any) => {
+  if (v === null || v === undefined) return 0;
+  const n = typeof v === 'string' ? parseFloat(v) : v;
+  return isNaN(n) ? 0 : n;
+};
+
+// بناء استعلام API
+const apiParams = new URLSearchParams();
+if (type) apiParams.set('category', type);
+if (offer) apiParams.set('listing_type', offer);
+if (area) apiParams.set('area_id', area);
+if (minPrice) apiParams.set('min_price', minPrice);
+if (maxPrice) apiParams.set('max_price', maxPrice);
+if (rooms) apiParams.set('bedrooms', rooms);
+if (finishing) apiParams.set('finishing_type', finishing);
+if (q) apiParams.set('q', q);
+apiParams.set('sort', sort);
+apiParams.set('page', String(page));
+apiParams.set('limit', String(PER_PAGE));
+
+let properties: any[] = [];
+let totalCount = 0;
+let totalPages = 0;
+let areas: any[] = [];
+let stats = { total: 0, forSale: 0, forRent: 0 };
+
+try {
+  const propsRes = await fetch(`${API_URL}/api/properties?${apiParams.toString()}`);
+  if (propsRes.ok) {
+    const data = await propsRes.json();
+    properties = data.data || [];
+    totalCount = toNum(data.pagination?.total || data.total) || properties.length;
+    totalPages = toNum(data.pagination?.totalPages) || Math.ceil(totalCount / PER_PAGE);
+  }
+} catch (e) { console.error('فشل جلب العقارات:', e); }
+
+try {
+  const areasRes = await fetch(`${API_URL}/api/areas`);
+  if (areasRes.ok) {
+    const data = await areasRes.json();
+    areas = data.data || [];
+  }
+} catch (e) { console.error('فشل جلب المناطق:', e); }
+
+try {
+  const statsRes = await fetch(`${API_URL}/api/properties/stats`);
+  if (statsRes.ok) {
+    const data = await statsRes.json();
+    const s = data.data || {};
+    stats = {
+      total: toNum(s.total),
+      forSale: toNum(s.for_sale),
+      forRent: toNum(s.for_rent),
+    };
+  }
+} catch (e) { console.error('فشل جلب الإحصائيات:', e); }
+
+// حفظ الفلاتر للـ pagination
+const queryObj: Record<string, string> = {};
+if (type) queryObj.type = type;
+if (area) queryObj.area = area;
+if (offer) queryObj.offer = offer;
+if (minPrice) queryObj.min_price = minPrice;
+if (maxPrice) queryObj.max_price = maxPrice;
+if (rooms) queryObj.rooms = rooms;
+if (finishing) queryObj.finishing = finishing;
+if (q) queryObj.q = q;
+if (sort && sort !== 'newest') queryObj.sort = sort;
+const queryString = new URLSearchParams(queryObj).toString();
+
+const sortOptions = [
+  { value: 'newest', label: 'الأحدث' },
+  { value: 'oldest', label: 'الأقدم' },
+  { value: 'price_asc', label: 'الأرخص' },
+  { value: 'price_desc', label: 'الأغلى' },
+  { value: 'area_desc', label: 'الأكبر' },
+  { value: 'views_desc', label: 'الأكثر مشاهدة' },
+];
+
+const buildSortUrl = (sortValue: string) => {
+  const p = new URLSearchParams(queryObj);
+  if (sortValue !== 'newest') p.set('sort', sortValue);
+  else p.delete('sort');
+  p.delete('page');
+  const qs = p.toString();
+  return `/aqar-zain/properties/${qs ? `?${qs}` : ''}`;
+};
+
+// عدد الفلاتر النشطة
+const activeFiltersCount = [
+  type, area, offer, minPrice, maxPrice, rooms, finishing, q
+].filter(Boolean).length;
+---
+
+<BaseLayout
+  title="قائمة العقارات | عقار زين"
+  description="تصفح أحدث العقارات المتاحة للبيع والإيجار في الإسماعيلية ومصر"
+>
+  <div class="bg-gray-50 min-h-screen">
+
+    <!-- Hero -->
+    <div class="bg-gradient-to-l from-blue-700 via-blue-600 to-blue-800 text-white">
+      <div class="container mx-auto px-4 py-6 md:py-8">
+
+        <Breadcrumbs
+          items={[
+            { href: '/aqar-zain/', label: 'الرئيسية' },
+            { label: 'العقارات' },
+          ]}
+          variant="hero"
+        />
+
+        <h1 class="text-xl md:text-2xl font-extrabold mb-1.5">
+          تصفح العقارات المتاحة
+        </h1>
+        <p class="text-blue-100 text-xs md:text-sm">
+          اكتشف أفضل العقارات في الإسماعيلية ومصر
+        </p>
+
+        <div class="grid grid-cols-3 gap-2 md:gap-3 mt-4 max-w-md">
+          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-2.5 border border-white/20">
+            <div class="text-lg md:text-xl font-extrabold text-white">{stats.total}</div>
+            <div class="text-[10px] md:text-xs text-blue-100 mt-0.5">إجمالي</div>
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-2.5 border border-white/20">
+            <div class="text-lg md:text-xl font-extrabold text-white">{stats.forSale}</div>
+            <div class="text-[10px] md:text-xs text-blue-100 mt-0.5">للبيع</div>
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-lg p-2.5 border border-white/20">
+            <div class="text-lg md:text-xl font-extrabold text-white">{stats.forRent}</div>
+            <div class="text-[10px] md:text-xs text-blue-100 mt-0.5">للإيجار</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- المحتوى -->
+    <div class="container mx-auto px-4 py-5">
+
+      <!-- شريط البحث -->
+      <form method="GET" action="/aqar-zain/properties/" class="mb-4">
+        {Object.entries(queryObj).map(([k, v]) => (
+          <input type="hidden" name={k} value={v} />
+        ))}
+        <div class="relative">
+          <input
+            type="text"
+            name="q"
+            value={q}
+            placeholder="ابحث في العقارات... (عنوان، وصف)"
+            class="w-full px-4 py-2.5 pr-10 border border-gray-200 rounded-xl shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm bg-white"
+          />
+          <button
+            type="submit"
+            class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center transition"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-5">
+
+        <div class="lg:col-span-1">
+          <PropertyFilters
+            areas={areas}
+            selectedType={type}
+            selectedArea={area}
+            selectedOffer={offer}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            selectedRooms={rooms}
+            selectedFinishing={finishing}
+          />
+        </div>
+
+        <div class="lg:col-span-3">
+
+          <!-- شريط الترتيب -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 mb-4 flex flex-wrap items-center justify-between gap-2">
+            <div class="text-gray-700 text-sm flex items-center gap-2">
+              <span><span class="text-blue-600 font-bold">{totalCount}</span> عقار متاح</span>
+              {activeFiltersCount > 0 && (
+                <span class="px-2 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-bold rounded-full border border-blue-100">
+                  {activeFiltersCount} فلتر نشط
+                </span>
+              )}
+            </div>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <label class="text-xs text-gray-600 font-medium">ترتيب:</label>
+              <div class="flex flex-wrap gap-1">
+                {sortOptions.map((opt) => (
+                  <a
+                    href={buildSortUrl(opt.value)}
+                    class={`px-2.5 py-1 text-xs rounded-md font-medium transition ${
+                      sort === opt.value
+                        ? 'bg-blue-600 text-white shadow'
+                        : 'bg-gray-100 text-gray-700 hover:bg-blue-50 hover:text-blue-600'
+                    }`}
+                  >
+                    {opt.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {properties.length > 0 ? (
+            <>
+              <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                {properties.map((property) => (
+                  <PropertyCard property={property} />
+                ))}
+              </div>
+
+              <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                baseUrl="/aqar-zain/properties/"
+                queryString={queryString}
+              />
+            </>
+          ) : (
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+              <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-gray-100 flex items-center justify-center">
+                <svg class="w-7 h-7 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+              </div>
+              <h3 class="text-base font-bold text-gray-800 mb-1">لا توجد عقارات مطابقة</h3>
+              <p class="text-gray-500 text-xs mb-4">جرب تغيير الفلاتر أو البحث بكلمات أخرى</p>
+              <a
+                href="/aqar-zain/properties/"
+                class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg shadow transition"
+              >
+                إعادة تعيين
+              </a>
+            </div>
+          )}
+
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

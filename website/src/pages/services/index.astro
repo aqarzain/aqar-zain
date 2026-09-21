@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+
+const services = [
+  {
+    id: 'sell',
+    icon: '🏷️',
+    title: 'بيع العقارات',
+    description: 'نساعدك في بيع عقارك بأفضل سعر، مع تسويق احترافي وتقدير دقيق للقيمة السوقية.',
+    features: ['تقدير سعر مجاني', 'تصوير احترافي', 'تسويق على كل المنصات', 'متابعة كاملة للصفقة'],
+  },
+  {
+    id: 'buy',
+    icon: '🏠',
+    title: 'شراء العقارات',
+    description: 'نرشدك لأفضل العقارات المتاحة حسب ميزانيتك واحتياجاتك، مع فحص شامل قبل الشراء.',
+    features: ['استشارة مجانية', 'زيارة ميدانية للعقار', 'فحص قانوني وفني', 'مفاوضات على السعر'],
+  },
+  {
+    id: 'rent',
+    icon: '🔑',
+    title: 'الإيجار',
+    description: 'نساعدك في إيجار العقار المناسب بأفضل شروط، أو تأجير عقارك بأمان.',
+    features: ['عقود موثقة', 'متابعة دورية', 'تحصيل الإيجار', 'حل النزاعات'],
+  },
+  {
+    id: 'consult',
+    icon: '💡',
+    title: 'الاستشارات العقارية',
+    description: 'استشارات متخصصة في السوق العقاري المصري، وفرص الاستثمار الأمثل.',
+    features: ['تحليل السوق', 'دراسة جدوى', 'تقييم استثماري', 'استراتيجيات طويلة المدى'],
+  },
+];
+---
+
+<BaseLayout
+  title="خدماتنا | عقار زين"
+  description="خدمات عقارية متكاملة - بيع، شراء، إيجار، واستشارات"
+>
+  <div class="bg-gray-50 min-h-screen">
+
+    <!-- Hero -->
+    <div class="bg-gradient-to-l from-blue-700 via-blue-600 to-blue-800 text-white">
+      <div class="container mx-auto px-4 py-6 md:py-8">
+        <Breadcrumbs
+          items={[
+            { href: '/aqar-zain/', label: 'الرئيسية' },
+            { label: 'خدماتنا' },
+          ]}
+          variant="hero"
+        />
+        <h1 class="text-xl md:text-2xl font-extrabold mb-1.5">خدماتنا</h1>
+        <p class="text-blue-100 text-xs md:text-sm">
+          حلول عقارية متكاملة لكل احتياجاتك
+        </p>
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-6 max-w-5xl">
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {services.map((service) => (
+          <section
+            id={service.id}
+            class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-blue-200 transition group"
+          >
+            <div class="w-12 h-12 bg-blue-50 group-hover:bg-blue-600 rounded-lg flex items-center justify-center mb-3 text-2xl transition-colors">
+              {service.icon}
+            </div>
+            <h2 class="text-base font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition">
+              {service.title}
+            </h2>
+            <p class="text-xs text-gray-600 leading-6 mb-4">
+              {service.description}
+            </p>
+            <ul class="space-y-1.5">
+              {service.features.map((f) => (
+                <li class="flex items-center gap-2 text-xs text-gray-600">
+                  <svg class="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+
+      <!-- CTA -->
+      <div class="bg-gradient-to-l from-blue-600 to-blue-800 rounded-xl p-5 md:p-6 text-white text-center mt-5">
+        <h3 class="text-lg font-bold mb-2">هل تحتاج خدمة معينة؟</h3>
+        <p class="text-xs text-blue-100 mb-4">تواصل معنا وسنساعدك فوراً</p>
+        <div class="flex flex-wrap justify-center gap-2">
+          <a href="tel:01281441854" class="px-4 py-2 bg-white text-blue-700 text-sm font-bold rounded-lg hover:bg-blue-50 transition">
+            📱 اتصل الآن
+          </a>
+          <a href="https://wa.me/201281441854" target="_blank" rel="noopener" class="px-4 py-2 bg-green-600 text-white text-sm font-bold rounded-lg hover:bg-green-700 transition">
+            💬 واتساب
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</BaseLayout>

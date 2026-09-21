@@ -1,0 +1,452 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ShareButtons from '../../components/ShareButtons.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+
+// ============================================================
+// getStaticPaths
+// ============================================================
+export async function getStaticPaths() {
+  const API_URL = 'http://localhost:3000';
+  console.log('🔍 [properties] جلب العقارات من:', API_URL);
+
+  let ids: number[] = [];
+
+  try {
+    const res = await fetch(`${API_URL}/api/properties?limit=1000`);
+    if (res.ok) {
+      const data = await res.json();
+      ids = (data.data || []).map((p: any) => p.id);
+      console.log(`✅ [properties] تم جلب ${ids.length} عقار`);
+    }
+  } catch (e: any) {
+    console.error('❌ [properties] خطأ:', e.message);
+  }
+
+  if (ids.length === 0) ids = [4, 5, 6, 7];
+
+  return ids.map((id) => ({
+    params: { id: String(id) },
+  }));
+}
+
+// ============================================================
+// جلب البيانات
+// ============================================================
+const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+const { id } = Astro.params;
+
+const toNum = (v: any) => {
+  if (v === null || v === undefined) return 0;
+  const n = typeof v === 'string' ? parseFloat(v) : v;
+  return isNaN(n) ? 0 : n;
+};
+
+let property: any = null;
+
+try {
+  const res = await fetch(`${API_URL}/api/properties/${id}?track=false`);
+  if (res.ok) {
+    const data = await res.json();
+    property = data.data;
+  }
+} catch (e) {
+  console.error(`❌ فشل جلب العقار ${id}:`, e);
+}
+
+if (!property) {
+  return Astro.redirect('/aqar-zain/properties/');
+}
+
+// ============================================================
+// دوال مساعدة
+// ============================================================
+const formatPrice = (p?: number | string) => {
+  const n = toNum(p);
+  if (!n) return 'السعر عند الطلب';
+  if (n >= 1000000) return `${(n / 1000000).toFixed(2)} مليون جنيه`;
+  if (n >= 1000) return `${Math.round(n / 1000)} ألف جنيه`;
+  return `${n.toLocaleString('ar-EG')} جنيه`;
+};
+
+const formatDate = (d?: string) => {
+  if (!d) return '';
+  try {
+    return new Date(d).toLocaleDateString('ar-EG', {
+      year: 'numeric', month: 'long', day: 'numeric',
+    });
+  } catch { return d; }
+};
+
+// ✅ التحقق من صحة الصورة
+const isValidImage = (url: string | undefined | null): boolean => {
+  if (!url) return false;
+  if (url.includes('placehold.co')) return false;
+  if (url.trim() === '') return false;
+  return true;
+};
+
+const getPrimaryImage = (): string | null => {
+  if (!property.media || property.media.length === 0) return null;
+  const primary = property.media.find((m: any) => m.is_primary) || property.media[0];
+  return isValidImage(primary?.media_url) ? primary.media_url : null;
+};
+
+// ✅ أيقونة الفئة
+const getCategoryIcon = (cat?: string) => {
+  const map: Record<string, string> = {
+    'شقة': '🏢',
+    'منزل': '🏠',
+    'فيلا': '🏡',
+    'محل': '🏪',
+    'أرض': '🌍',
+    'مكتب': '💼',
+    'مستودع': '📦',
+  };
+  return map[cat || ''] || '🏢';
+};
+
+// ✅ الصور الصالحة فقط
+const validImages = (property.media || [])
+  .filter((m: any) => isValidImage(m.media_url))
+  .map((m: any) => m.media_url);
+
+const mediaUrl = getPrimaryImage();
+const categoryIcon = getCategoryIcon(property.category);
+
+const areaSqm = toNum(property.area_sqm);
+const rooms = toNum(property.rooms) || toNum(property.bedrooms);
+const bathrooms = toNum(property.bathrooms);
+const views = toNum(property.views_count);
+const phoneClicks = toNum(property.phone_clicks);
+const whatsappNumber = property.whatsapp_contact || '201281441854';
+const phoneNumber = property.phone_contact || '01281441854';
+
+const whatsappText = encodeURIComponent(
+  `مرحباً، أنا مهتم بالعقار رقم ${property.id}: ${property.title || ''}`
+);
+
+// SEO
+const seoTitle = `${property.title || `عقار #${property.id}`} - ${formatPrice(property.price)} | عقار زين`;
+const seoDescription = property.description?.slice(0, 155) ||
+  `${property.category || 'عقار'} في ${property.area_name || ''} - ${formatPrice(property.price)}`;
+const seoImage = mediaUrl || '/aqar-zain/og-default.svg';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'RealEstateListing',
+  name: property.title,
+  description: property.description,
+  url: `https://aqarzain.github.io/aqar-zain/properties/${property.id}/`,
+  image: mediaUrl ? [mediaUrl] : undefined,
+  datePosted: property.created_at,
+  offers: property.price ? {
+    '@type': 'Offer',
+    price: toNum(property.price),
+    priceCurrency: 'EGP',
+  } : undefined,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: property.city || 'الإسماعيلية',
+    addressCountry: 'EG',
+  },
+};
+
+const shareUrl = `https://aqarzain.github.io/aqar-zain/properties/${property.id}/`;
+const shareArea = `${property.area_name || ''}${property.city ? ' - ' + property.city : ''}`;
+---
+
+<BaseLayout
+  title={seoTitle}
+  description={seoDescription}
+  image={seoImage}
+  type="article"
+  jsonLd={jsonLd}
+>
+
+  <div class="bg-gray-50 min-h-screen">
+
+    <!-- ============================================================ -->
+    <!-- Hero -->
+    <!-- ============================================================ -->
+    <div class="bg-gradient-to-l from-blue-700 via-blue-600 to-blue-800 text-white">
+      <div class="container mx-auto px-4 py-5 md:py-6">
+
+        <Breadcrumbs
+          items={[
+            { href: '/aqar-zain/', label: 'الرئيسية' },
+            { href: '/aqar-zain/properties/', label: 'العقارات' },
+            { label: property.title || `عقار #${property.id}` },
+          ]}
+          variant="hero"
+        />
+
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div class="flex-1 min-w-0">
+            <h1 class="text-lg md:text-2xl font-extrabold mb-1.5 leading-tight">
+              {property.title || `عقار رقم ${property.id}`}
+            </h1>
+            {(property.area_name || property.city) && (
+              <div class="flex items-center gap-1.5 text-blue-100 text-xs md:text-sm">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                {property.area_name || ''}{property.city ? ` - ${property.city}` : ''}
+              </div>
+            )}
+          </div>
+
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            <span class={`px-2.5 py-1 text-white text-[11px] font-bold rounded-full ${
+              property.listing_type === 'إيجار' ? 'bg-green-600' : 'bg-blue-500'
+            }`}>
+              {property.listing_type === 'إيجار' ? 'للإيجار' : 'للبيع'}
+            </span>
+            {property.category && (
+              <span class="px-2.5 py-1 bg-white/20 backdrop-blur-sm text-white text-[11px] font-bold rounded-full border border-white/30">
+                {property.category}
+              </span>
+            )}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- المحتوى -->
+    <!-- ============================================================ -->
+    <div class="container mx-auto px-4 py-5">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+
+        <!-- العمود الرئيسي -->
+        <div class="lg:col-span-2 space-y-4">
+
+          <!-- الصورة الرئيسية -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="aspect-video flex items-center justify-center">
+              {mediaUrl ? (
+                <img
+                  src={mediaUrl}
+                  alt={property.title}
+                  class="w-full h-full object-cover"
+                  loading="eager"
+                />
+              ) : (
+                <div class="w-full h-full bg-gradient-to-br from-blue-500 to-blue-700 flex flex-col items-center justify-center text-white">
+                  <div class="text-8xl mb-4">{categoryIcon}</div>
+                  <div class="text-base font-bold opacity-90">{property.category || 'عقار'}</div>
+                  <div class="text-xs opacity-70 mt-1.5">عقار زين</div>
+                </div>
+              )}
+            </div>
+
+            {validImages.length > 1 && (
+              <div class="grid grid-cols-4 gap-1 p-1 bg-gray-50">
+                {validImages.slice(0, 8).map((url: string) => (
+                  <div class="aspect-square bg-gray-100 rounded overflow-hidden">
+                    <img src={url} alt={`صورة ${property.title}`} class="w-full h-full object-cover hover:scale-105 transition" loading="lazy" />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <!-- السعر والمواصفات -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div class="flex items-center justify-between pb-3 border-b border-gray-100">
+              <div>
+                <p class="text-[11px] text-gray-500 mb-0.5">السعر</p>
+                <p class="text-xl md:text-2xl font-extrabold text-blue-600">
+                  {formatPrice(property.price)}
+                </p>
+              </div>
+              {property.price_is_negotiable && (
+                <span class="px-2 py-0.5 bg-amber-50 text-amber-700 text-[10px] font-bold rounded-full border border-amber-200">
+                  قابل للتفاوض
+                </span>
+              )}
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-3">
+              {areaSqm > 0 && (
+                <div class="text-center">
+                  <div class="text-base mb-1">📐</div>
+                  <div class="text-sm font-bold text-gray-800">{areaSqm}م²</div>
+                  <div class="text-[10px] text-gray-500">المساحة</div>
+                </div>
+              )}
+              {rooms > 0 && (
+                <div class="text-center">
+                  <div class="text-base mb-1">🛏️</div>
+                  <div class="text-sm font-bold text-gray-800">{rooms}</div>
+                  <div class="text-[10px] text-gray-500">غرف</div>
+                </div>
+              )}
+              {bathrooms > 0 && (
+                <div class="text-center">
+                  <div class="text-base mb-1">🚿</div>
+                  <div class="text-sm font-bold text-gray-800">{bathrooms}</div>
+                  <div class="text-[10px] text-gray-500">حمام</div>
+                </div>
+              )}
+              {property.floor_number && (
+                <div class="text-center">
+                  <div class="text-base mb-1">🏢</div>
+                  <div class="text-sm font-bold text-gray-800">{property.floor_number}</div>
+                  <div class="text-[10px] text-gray-500">الطابق</div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <!-- الوصف -->
+          {property.description && (
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+              <h2 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <span class="w-1 h-4 bg-blue-600 rounded"></span>
+                الوصف
+              </h2>
+              <p class="text-xs text-gray-600 leading-7 whitespace-pre-line">
+                {property.description}
+              </p>
+            </div>
+          )}
+
+          <!-- المواصفات -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <h2 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <span class="w-1 h-4 bg-blue-600 rounded"></span>
+              المواصفات
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+              {property.category && (
+                <div class="flex flex-col">
+                  <span class="text-gray-500 mb-0.5">النوع</span>
+                  <span class="font-bold text-gray-800">{property.category}</span>
+                </div>
+              )}
+              {property.listing_type && (
+                <div class="flex flex-col">
+                  <span class="text-gray-500 mb-0.5">العرض</span>
+                  <span class="font-bold text-gray-800">{property.listing_type}</span>
+                </div>
+              )}
+              {areaSqm > 0 && (
+                <div class="flex flex-col">
+                  <span class="text-gray-500 mb-0.5">المساحة</span>
+                  <span class="font-bold text-gray-800">{areaSqm} م²</span>
+                </div>
+              )}
+              {property.finishing_type && property.finishing_type !== 'بدون تشطيب' && (
+                <div class="flex flex-col">
+                  <span class="text-gray-500 mb-0.5">التشطيب</span>
+                  <span class="font-bold text-gray-800">{property.finishing_type}</span>
+                </div>
+              )}
+              {property.created_at && (
+                <div class="flex flex-col">
+                  <span class="text-gray-500 mb-0.5">تاريخ الإضافة</span>
+                  <span class="font-bold text-gray-800">{formatDate(property.created_at)}</span>
+                </div>
+              )}
+            </div>
+
+            {property.features && property.features.length > 0 && (
+              <div class="mt-4 pt-4 border-t border-gray-100">
+                <h3 class="text-xs font-bold text-gray-700 mb-2">المميزات</h3>
+                <div class="flex flex-wrap gap-1.5">
+                  {property.features.map((f: any) => (
+                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-[11px] font-medium rounded-full border border-blue-100">
+                      {f.icon} {f.name_ar}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <!-- 📤 قسم المشاركة الكبير -->
+          <div class="bg-gradient-to-l from-blue-50 to-white rounded-xl shadow-sm border border-blue-100 p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-lg">📢</span>
+              <h2 class="text-sm font-bold text-gray-800">
+                أعجبك العقار؟ شاركه مع أصدقائك
+              </h2>
+            </div>
+            <p class="text-xs text-gray-600 mb-3">
+              ساعد غيرك في إيجاد عقاره المثالي، وشارك هذا العقار على منصاتك المفضلة.
+            </p>
+            <ShareButtons
+              title={property.title || `عقار رقم ${property.id}`}
+              url={shareUrl}
+              image={mediaUrl || ''}
+              price={property.price}
+              area={shareArea}
+              compact={false}
+            />
+          </div>
+
+        </div>
+
+        <!-- العمود الجانبي -->
+        <div class="lg:col-span-1">
+          <div class="lg:sticky lg:top-20 space-y-3">
+
+            <!-- تواصل -->
+            <div class="bg-white rounded-xl shadow-md border border-gray-100 p-4">
+              <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                <span class="w-1 h-4 bg-blue-600 rounded"></span>
+                تواصل معنا
+              </h3>
+
+              <div class="space-y-2">
+                <a
+                  href={`tel:${phoneNumber}`}
+                  class="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg shadow transition"
+                >
+                  📞 اتصل الآن
+                </a>
+                <a
+                  href={`https://wa.me/${whatsappNumber}?text=${whatsappText}`}
+                  target="_blank"
+                  rel="noopener"
+                  class="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-lg shadow transition"
+                >
+                  💬 واتساب
+                </a>
+              </div>
+
+              <div class="mt-3 pt-3 border-t border-gray-100 text-[11px] text-gray-500 space-y-1">
+                {views > 0 && <div>👁 {views} مشاهدة</div>}
+                {phoneClicks > 0 && <div>📞 {phoneClicks} اتصال</div>}
+              </div>
+            </div>
+
+            <!-- 📤 مشاركة سريعة -->
+            <ShareButtons
+              title={property.title || `عقار رقم ${property.id}`}
+              url={shareUrl}
+              image={mediaUrl || ''}
+              price={property.price}
+              area={shareArea}
+              compact={true}
+            />
+
+            <!-- نصيحة -->
+            <div class="bg-blue-50 rounded-xl border border-blue-100 p-4">
+              <div class="text-2xl mb-2">💡</div>
+              <h4 class="text-xs font-bold text-blue-800 mb-1">نصيحة</h4>
+              <p class="text-[11px] text-blue-700 leading-5">
+                تحقق من العقار على الطبيعة قبل الشراء، وتأكد من الأوراق القانونية.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</BaseLayout>

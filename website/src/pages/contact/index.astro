@@ -1,0 +1,232 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+---
+
+<BaseLayout
+  title="تواصل معنا | عقار زين"
+  description="تواصل مع فريق عقار زين - الإسماعيلية، مصر. نحن هنا لمساعدتك."
+>
+  <div class="bg-gray-50 min-h-screen">
+
+    <!-- Hero -->
+    <div class="bg-gradient-to-l from-blue-700 via-blue-600 to-blue-800 text-white">
+      <div class="container mx-auto px-4 py-6 md:py-8">
+        <Breadcrumbs
+          items={[
+            { href: '/aqar-zain/', label: 'الرئيسية' },
+            { label: 'تواصل معنا' },
+          ]}
+          variant="hero"
+        />
+        <h1 class="text-xl md:text-2xl font-extrabold mb-1.5">تواصل معنا</h1>
+        <p class="text-blue-100 text-xs md:text-sm">
+          فريقنا جاهز لمساعدتك في أي وقت
+        </p>
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-6 max-w-5xl">
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        <!-- معلومات التواصل -->
+        <div class="lg:col-span-1 space-y-3">
+
+          <a href="tel:01281441854" class="block bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-blue-200 transition group">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 bg-blue-50 group-hover:bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors">
+                <span class="text-lg group-hover:scale-110 transition">📱</span>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-gray-800 mb-0.5">اتصل بنا</h3>
+                <p class="text-xs text-gray-600 group-hover:text-blue-600 transition" dir="ltr">01281441854</p>
+              </div>
+            </div>
+          </a>
+
+          <a href="mailto:info@aqarzain.com" class="block bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-blue-200 transition group">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 bg-blue-50 group-hover:bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors">
+                <span class="text-lg group-hover:scale-110 transition">📧</span>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-gray-800 mb-0.5">راسلنا</h3>
+                <p class="text-xs text-gray-600 group-hover:text-blue-600 transition">info@aqarzain.com</p>
+              </div>
+            </div>
+          </a>
+
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                <span class="text-lg">📍</span>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-gray-800 mb-0.5">العنوان</h3>
+                <p class="text-xs text-gray-600">الإسماعيلية، مصر</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- واتساب -->
+          <a
+            href="https://wa.me/201281441854?text=مرحباً، أريد الاستفسار عن خدماتكم"
+            target="_blank"
+            rel="noopener"
+            class="block bg-green-600 hover:bg-green-700 text-white rounded-xl shadow-md hover:shadow-lg p-4 transition text-center group"
+          >
+            <div class="text-2xl mb-1 group-hover:scale-110 transition">💬</div>
+            <div class="text-sm font-bold">تواصل عبر واتساب</div>
+            <div class="text-[10px] opacity-80 mt-0.5">رد فوري</div>
+          </a>
+
+          <!-- ساعات العمل -->
+          <div class="bg-blue-50 rounded-xl border border-blue-100 p-4">
+            <h3 class="text-xs font-bold text-blue-800 mb-2 flex items-center gap-1.5">
+              🕒 ساعات العمل
+            </h3>
+            <ul class="space-y-1 text-[11px] text-blue-700">
+              <li class="flex justify-between">
+                <span>السبت - الخميس</span>
+                <span class="font-bold">9:00 - 18:00</span>
+              </li>
+              <li class="flex justify-between">
+                <span>الجمعة</span>
+                <span class="font-bold">مغلق</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- نموذج التواصل -->
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
+            <h2 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span class="w-1 h-5 bg-blue-600 rounded"></span>
+              أرسل لنا رسالة
+            </h2>
+
+            <form id="contact-form" class="space-y-4">
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-gray-700 mb-1.5">
+                    الاسم الكامل <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    required
+                    class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-xs"
+                    placeholder="اكتب اسمك"
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-700 mb-1.5">
+                    رقم الهاتف <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    required
+                    pattern="[0-9]{10,15}"
+                    class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-xs"
+                    placeholder="01xxxxxxxxx"
+                    dir="ltr"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1.5">البريد الإلكتروني</label>
+                <input
+                  type="email"
+                  name="email"
+                  class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-xs"
+                  placeholder="example@email.com"
+                  dir="ltr"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1.5">الموضوع</label>
+                <select name="subject" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-xs bg-white">
+                  <option value="general">استفسار عام</option>
+                  <option value="buy">أرغب في شراء عقار</option>
+                  <option value="sell">أرغب في بيع عقار</option>
+                  <option value="rent">استفسار عن الإيجار</option>
+                  <option value="estimate">طلب تقدير سعر</option>
+                  <option value="complaint">شكوى أو اقتراح</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-gray-700 mb-1.5">
+                  الرسالة <span class="text-red-500">*</span>
+                </label>
+                <textarea
+                  name="message"
+                  required
+                  rows="5"
+                  class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-xs resize-none"
+                  placeholder="اكتب رسالتك هنا..."
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 rounded-lg shadow hover:shadow-md transition text-sm flex items-center justify-center gap-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+                إرسال الرسالة
+              </button>
+
+              <p id="form-status" class="text-xs text-center hidden"></p>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const status = document.getElementById('form-status') as HTMLElement;
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const name = data.get('name');
+    const phone = data.get('phone');
+    const email = data.get('email') || 'غير محدد';
+    const subject = data.get('subject');
+    const message = data.get('message');
+
+    // إرسال عبر واتساب
+    const text = encodeURIComponent(
+      `مرحباً،\n\n` +
+      `📝 طلب جديد من موقع عقار زين:\n\n` +
+      `الاسم: ${name}\n` +
+      `الهاتف: ${phone}\n` +
+      `البريد: ${email}\n` +
+      `الموضوع: ${subject}\n\n` +
+      `الرسالة:\n${message}`
+    );
+
+    window.open(`https://wa.me/201281441854?text=${text}`, '_blank');
+
+    status.textContent = '✅ سيتم تحويلك إلى واتساب لإتمام الإرسال';
+    status.className = 'text-xs text-center text-green-600 font-medium block mt-2';
+    form.reset();
+
+    setTimeout(() => {
+      status.className = 'text-xs text-center hidden';
+    }, 5000);
+  });
+</script>

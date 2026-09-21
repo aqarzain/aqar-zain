@@ -1,0 +1,220 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+
+const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
+
+let areas: any[] = [];
+try {
+  const res = await fetch(`${API_URL}/api/areas`);
+  if (res.ok) {
+    const data = await res.json();
+    areas = data.data || [];
+  }
+} catch (e) { console.error(e); }
+---
+
+<BaseLayout
+  title="تقدير السعر | عقار زين"
+  description="احصل على تقدير دقيق لسعر عقارك باستخدام الذكاء الاصطناعي"
+>
+  <div class="bg-gray-50 min-h-screen">
+
+    <!-- Hero -->
+    <div class="bg-gradient-to-l from-blue-700 via-blue-600 to-blue-800 text-white">
+      <div class="container mx-auto px-4 py-6 md:py-8">
+        <Breadcrumbs
+          items={[
+            { href: '/aqar-zain/', label: 'الرئيسية' },
+            { label: 'تقدير السعر' },
+          ]}
+          variant="hero"
+        />
+        <h1 class="text-xl md:text-2xl font-extrabold mb-1.5">تقدير السعر الذكي</h1>
+        <p class="text-blue-100 text-xs md:text-sm">
+          احصل على تقدير دقيق لسعر عقارك خلال ثوانٍ
+        </p>
+      </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-6 max-w-4xl">
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        <!-- النموذج -->
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6">
+            <h2 class="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span class="w-1 h-5 bg-blue-600 rounded"></span>
+              أدخل بيانات العقار
+            </h2>
+
+            <form id="estimate-form" class="space-y-4">
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-gray-700 mb-1.5">نوع العقار</label>
+                  <select name="category" required class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-xs">
+                    <option value="">اختر النوع</option>
+                    <option value="شقة">شقة</option>
+                    <option value="محل">محل تجاري</option>
+                    <option value="فيلا">فيلا</option>
+                    <option value="منزل">منزل</option>
+                    <option value="أرض">أرض</option>
+                    <option value="مكتب">مكتب</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-700 mb-1.5">المنطقة</label>
+                  <select name="area_id" required class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-xs">
+                    <option value="">اختر المنطقة</option>
+                    {areas.map((a) => (
+                      <option value={a.id}>{a.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-gray-700 mb-1.5">المساحة (م²)</label>
+                  <input type="number" name="area_sqm" required min="1" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-xs" placeholder="مثال: 100" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-700 mb-1.5">نوع العرض</label>
+                  <select name="listing_type" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-xs">
+                    <option value="بيع">بيع</option>
+                    <option value="إيجار">إيجار</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-bold text-gray-700 mb-1.5">عدد الغرف (اختياري)</label>
+                  <input type="number" name="rooms" min="0" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-xs" placeholder="0" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-700 mb-1.5">نوع التشطيب</label>
+                  <select name="finishing_type" class="w-full px-3 py-2 border border-gray-200 rounded-lg focus:border-blue-500 outline-none text-xs">
+                    <option value="">غير محدد</option>
+                    <option value="بدون تشطيب">بدون تشطيب</option>
+                    <option value="نصف تشطيب">نصف تشطيب</option>
+                    <option value="سوبر لوكس">سوبر لوكس</option>
+                    <option value="لوكس">لوكس</option>
+                  </select>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-2.5 rounded-lg shadow hover:shadow-md transition text-sm flex items-center justify-center gap-2"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                </svg>
+                احسب السعر المتوقع
+              </button>
+
+            </form>
+
+            <!-- نتيجة -->
+            <div id="result" class="hidden mt-5 p-4 bg-gradient-to-l from-blue-50 to-blue-100 border border-blue-200 rounded-lg">
+              <div class="text-center">
+                <div class="text-xs text-blue-700 font-medium mb-1">السعر المتوقع</div>
+                <div id="result-price" class="text-2xl font-extrabold text-blue-700 mb-2">—</div>
+                <div id="result-range" class="text-xs text-blue-600">—</div>
+              </div>
+            </div>
+
+            <div id="error-msg" class="hidden mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700 text-center"></div>
+          </div>
+        </div>
+
+        <!-- معلومات جانبية -->
+        <div class="lg:col-span-1 space-y-3">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div class="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center mb-2 text-xl">🤖</div>
+            <h3 class="text-sm font-bold text-gray-800 mb-1.5">ذكاء اصطناعي</h3>
+            <p class="text-xs text-gray-600 leading-5">
+              نستخدم نماذج تعلم آلي متقدمة مدربة على آلاف العقارات في السوق المصري.
+            </p>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div class="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center mb-2 text-xl">⚡</div>
+            <h3 class="text-sm font-bold text-gray-800 mb-1.5">نتائج فورية</h3>
+            <p class="text-xs text-gray-600 leading-5">
+              احصل على التقدير خلال ثوانٍ معدودة.
+            </p>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div class="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center mb-2 text-xl">🎯</div>
+            <h3 class="text-sm font-bold text-gray-800 mb-1.5">دقة عالية</h3>
+            <p class="text-xs text-gray-600 leading-5">
+              تقديرات مبنية على بيانات حقيقية من السوق المحلي.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const API_URL = (window as any).__API_URL__ || 'http://localhost:3000';
+  const form = document.getElementById('estimate-form') as HTMLFormElement;
+  const result = document.getElementById('result') as HTMLElement;
+  const resultPrice = document.getElementById('result-price') as HTMLElement;
+  const resultRange = document.getElementById('result-range') as HTMLElement;
+  const errorMsg = document.getElementById('error-msg') as HTMLElement;
+
+  const formatPrice = (p: number) => {
+    if (p >= 1000000) return `${(p / 1000000).toFixed(2)} مليون جنيه`;
+    if (p >= 1000) return `${Math.round(p / 1000)} ألف جنيه`;
+    return `${p.toLocaleString('ar-EG')} جنيه`;
+  };
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    result.classList.add('hidden');
+    errorMsg.classList.add('hidden');
+
+    const formData = new FormData(form);
+    const payload = {
+      category: formData.get('category'),
+      area_id: parseInt(formData.get('area_id') as string),
+      area_sqm: parseFloat(formData.get('area_sqm') as string),
+      listing_type: formData.get('listing_type'),
+      rooms: parseInt(formData.get('rooms') as string) || 0,
+      finishing_type: formData.get('finishing_type') || null,
+    };
+
+    try {
+      const res = await fetch(`${API_URL}/api/estimate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+
+      if (data.success && data.data) {
+        const price = data.data.estimated_price || data.data.price;
+        resultPrice.textContent = formatPrice(price);
+        if (data.data.min_price && data.data.max_price) {
+          resultRange.textContent = `النطاق: ${formatPrice(data.data.min_price)} - ${formatPrice(data.data.max_price)}`;
+        } else {
+          resultRange.textContent = `± 15% تقريباً`;
+        }
+        result.classList.remove('hidden');
+      } else {
+        throw new Error(data.message || 'فشل الحساب');
+      }
+    } catch (err: any) {
+      errorMsg.textContent = '⚠️ ' + (err.message || 'حدث خطأ، حاول مرة أخرى');
+      errorMsg.classList.remove('hidden');
+    }
+  });
+</script>

@@ -1,0 +1,361 @@
+---
+import type { Area } from '../lib/api';
+
+interface Props {
+  areas: Area[];
+}
+
+const { areas } = Astro.props;
+---
+
+<div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="w-12 h-12 bg-gradient-to-br from-gold-500 to-gold-600 rounded-xl flex items-center justify-center text-white text-2xl">
+      🤖
+    </div>
+    <div>
+      <h2 class="text-2xl font-bold text-slate-800">قدّر سعر عقارك</h2>
+      <p class="text-sm text-slate-500">باستخدام الذكاء الاصطناعي (نموذج V13)</p>
+    </div>
+  </div>
+
+  <form id="estimateForm" class="space-y-6">
+    <!-- نوع العقار ونوع العرض -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-2">
+          🏠 نوع العقار *
+        </label>
+        <select
+          name="category"
+          required
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition"
+        >
+          <option value="">اختر النوع</option>
+          <option value="شقة">شقة</option>
+          <option value="منزل">منزل</option>
+          <option value="فيلا">فيلا</option>
+          <option value="محل">محل</option>
+          <option value="أرض">أرض</option>
+          <option value="شاليه">شاليه</option>
+          <option value="عمارة">عمارة</option>
+          <option value="مكتب">مكتب</option>
+          <option value="استوديو">استوديو</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-2">
+          🏷️ نوع العرض *
+        </label>
+        <select
+          name="listing_type"
+          required
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition"
+        >
+          <option value="">اختر النوع</option>
+          <option value="بيع">بيع</option>
+          <option value="إيجار">إيجار</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- المنطقة والمساحة -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-2">
+          📍 المنطقة *
+        </label>
+        <select
+          name="area_id"
+          required
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition"
+        >
+          <option value="">اختر المنطقة</option>
+          {areas.map((area) => (
+            <option value={area.id}>
+              {area.locality} ({area.city})
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-2">
+          📐 المساحة (م²) *
+        </label>
+        <input
+          type="number"
+          name="area_sqm"
+          required
+          min="10"
+          max="5000"
+          placeholder="مثال: 120"
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition"
+        />
+      </div>
+    </div>
+
+    <!-- الغرف والحمامات -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-2">
+          🛏️ عدد الغرف
+        </label>
+        <input
+          type="number"
+          name="bedrooms"
+          min="0"
+          max="20"
+          placeholder="0"
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-2">
+          🚻 الحمامات
+        </label>
+        <input
+          type="number"
+          name="bathrooms"
+          min="0"
+          max="10"
+          placeholder="1"
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold text-slate-700 mb-2">
+          🎨 التشطيب
+        </label>
+        <select
+          name="finishing_type"
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 transition"
+        >
+          <option value="">اختر</option>
+          <option value="سوبر لوكس">سوبر لوكس</option>
+          <option value="لوكس">لوكس</option>
+          <option value="تشطيب عادي">تشطيب عادي</option>
+          <option value="على المباني">على المباني</option>
+          <option value="بدون تشطيب">بدون تشطيب</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- المميزات -->
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-3">
+        ✨ المميزات
+      </label>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100 transition">
+          <input type="checkbox" name="has_gas" class="w-4 h-4" />
+          <span class="text-sm">🔥 غاز</span>
+        </label>
+
+        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100 transition">
+          <input type="checkbox" name="has_elevator" class="w-4 h-4" />
+          <span class="text-sm">🛗 أسانسير</span>
+        </label>
+
+        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100 transition">
+          <input type="checkbox" name="is_furnished" class="w-4 h-4" />
+          <span class="text-sm">🛋️ مفروش</span>
+        </label>
+
+        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100 transition">
+          <input type="checkbox" name="has_garden" class="w-4 h-4" />
+          <span class="text-sm">🌿 حديقة</span>
+        </label>
+
+        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100 transition">
+          <input type="checkbox" name="has_pool" class="w-4 h-4" />
+          <span class="text-sm">🏊 حمام سباحة</span>
+        </label>
+
+        <label class="flex items-center gap-2 p-3 bg-slate-50 rounded-lg cursor-pointer hover:bg-slate-100 transition">
+          <input type="checkbox" name="has_parking" class="w-4 h-4" />
+          <span class="text-sm">🚗 موقف</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- واجهة تجارية (للمحلات فقط) -->
+    <div id="commercialOption" class="hidden">
+      <label class="flex items-center gap-3 p-4 bg-gold-50 rounded-xl cursor-pointer border-2 border-gold-200">
+        <input type="checkbox" name="is_commercial_facade" class="w-5 h-5" />
+        <div>
+          <span class="font-bold text-slate-800">🏪 واجهة تجارية</span>
+          <p class="text-sm text-slate-600">هل المحل له واجهة تجارية مباشرة على الشارع؟</p>
+        </div>
+      </label>
+    </div>
+
+    <!-- زر التقدير -->
+    <button
+      type="submit"
+      class="w-full bg-gradient-to-l from-primary-600 to-primary-700 text-white py-4 rounded-xl font-bold text-lg hover:from-primary-700 hover:to-primary-800 transition shadow-lg flex items-center justify-center gap-3"
+    >
+      <span>🤖</span>
+      <span>قدّر السعر الآن</span>
+    </button>
+  </form>
+</div>
+
+<!-- JavaScript -->
+<script>
+  const form = document.getElementById('estimateForm') as HTMLFormElement;
+  const commercialOption = document.getElementById('commercialOption') as HTMLDivElement;
+  const categorySelect = form.querySelector('select[name="category"]') as HTMLSelectElement;
+
+  // إظهار خيار الواجهة التجارية للمحلات
+  categorySelect?.addEventListener('change', () => {
+    if (categorySelect.value === 'محل') {
+      commercialOption?.classList.remove('hidden');
+    } else {
+      commercialOption?.classList.add('hidden');
+    }
+  });
+
+  // معالجة النموذج
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const resultDiv = document.getElementById('estimateResult');
+    const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+    // إظهار التحميل
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>⏳</span><span>جاري التقدير...</span>';
+    }
+
+    // جمع البيانات
+    const data = {
+      category: formData.get('category') as string,
+      listing_type: formData.get('listing_type') as string,
+      area_id: Number(formData.get('area_id')),
+      area_sqm: Number(formData.get('area_sqm')),
+      bedrooms: formData.get('bedrooms') ? Number(formData.get('bedrooms')) : 0,
+      bathrooms: formData.get('bathrooms') ? Number(formData.get('bathrooms')) : 1,
+      finishing_type: formData.get('finishing_type') as string || 'تشطيب عادي',
+      has_gas: formData.get('has_gas') === 'on',
+      has_elevator: formData.get('has_elevator') === 'on',
+      is_furnished: formData.get('is_furnished') === 'on',
+      has_garden: formData.get('has_garden') === 'on',
+      has_pool: formData.get('has_pool') === 'on',
+      has_parking: formData.get('has_parking') === 'on',
+      is_commercial_facade: formData.get('is_commercial_facade') === 'on',
+      quality_rating: 3,
+    };
+
+    try {
+      const response = await fetch('https://nick-charity-aerial-prep.trycloudflare.com/api/estimate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const json = await response.json();
+
+      if (json.success && json.data) {
+        displayResult(json.data);
+      } else {
+        throw new Error(json.error || 'فشل التقدير');
+      }
+    } catch (error) {
+      console.error(error);
+      if (resultDiv) {
+        resultDiv.innerHTML = `
+          <div class="bg-red-50 border-2 border-red-200 rounded-2xl p-6 text-center">
+            <div class="text-4xl mb-3">❌</div>
+            <h3 class="text-xl font-bold text-red-700 mb-2">حدث خطأ</h3>
+            <p class="text-red-600">تعذر إجراء التقدير. حاول مرة أخرى.</p>
+          </div>
+        `;
+        resultDiv.scrollIntoView({ behavior: 'smooth' });
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>🤖</span><span>قدّر السعر الآن</span>';
+      }
+    }
+  });
+
+  function displayResult(data: any) {
+    const resultDiv = document.getElementById('estimateResult');
+    if (!resultDiv) return;
+
+    const predicted = Number(data.predicted_price);
+    const low = Number(data.confidence_low);
+    const high = Number(data.confidence_high);
+    const samples = data.based_on_samples || 0;
+    const confidence = (data.confidence_level * 100).toFixed(0);
+
+    const formattedPredicted = new Intl.NumberFormat('ar-EG', {
+      maximumFractionDigits: 0,
+    }).format(predicted);
+    const formattedLow = new Intl.NumberFormat('ar-EG', {
+      maximumFractionDigits: 0,
+    }).format(low);
+    const formattedHigh = new Intl.NumberFormat('ar-EG', {
+      maximumFractionDigits: 0,
+    }).format(high);
+
+    resultDiv.innerHTML = `
+      <div class="bg-gradient-to-br from-primary-700 to-primary-900 rounded-2xl p-8 text-white">
+        <div class="text-center mb-6">
+          <div class="text-6xl mb-4">💰</div>
+          <h3 class="text-2xl font-bold mb-2">السعر المتوقع</h3>
+          <div class="text-4xl md:text-5xl font-bold text-gold-500 mb-2">
+            ${formattedPredicted} ج
+          </div>
+          <p class="text-primary-100 text-sm">نموذج V13 – دقة ${confidence}%</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="bg-white/10 backdrop-blur rounded-xl p-4 text-center">
+            <div class="text-sm text-primary-100 mb-1">أقل تقدير</div>
+            <div class="text-xl font-bold">${formattedLow} ج</div>
+          </div>
+          <div class="bg-white/10 backdrop-blur rounded-xl p-4 text-center">
+            <div class="text-sm text-primary-100 mb-1">أعلى تقدير</div>
+            <div class="text-xl font-bold">${formattedHigh} ج</div>
+          </div>
+        </div>
+
+        <div class="bg-white/10 backdrop-blur rounded-xl p-4 mb-6 text-center">
+          <div class="text-sm text-primary-100 mb-1">بناءً على</div>
+          <div class="text-lg font-bold">${samples} عقار مشابه في المنطقة</div>
+        </div>
+
+        <div class="flex flex-wrap gap-3 justify-center">
+          <a
+            href="/aqar-zain/properties/"
+            class="bg-gold-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-gold-600 transition"
+          >
+            🏠 شاهد العقارات المشابهة
+          </a>
+          <a
+            href="https://wa.me/201281441854"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="bg-white text-primary-700 px-6 py-3 rounded-xl font-semibold hover:bg-slate-100 transition"
+          >
+            💬 تحدث مع مستشار
+          </a>
+        </div>
+
+        <p class="text-xs text-primary-200 text-center mt-6">
+          ⚠️ هذا التقدير تقريبي بناءً على بيانات السوق وقد يختلف السعر الفعلي
+        </p>
+      </div>
+    `;
+
+    resultDiv.scrollIntoView({ behavior: 'smooth' });
+  }
+</script>

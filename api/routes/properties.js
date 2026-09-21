@@ -5,13 +5,16 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/propertiesController');
-const { generalLimiter } = require('../middleware/rateLimiter');
+const { writeLimiter } = require('../middleware/rateLimiter');
 
-router.get('/', generalLimiter, controller.getAllProperties);
+// القراءة (بدون rate limit صارم لبناء الموقع)
+router.get('/', controller.getAllProperties);
 router.get('/stats', controller.getPropertyStats);
 router.get('/:id', controller.getPropertyById);
-router.post('/', controller.createProperty);
-router.put('/:id', controller.updateProperty);
-router.delete('/:id', controller.deleteProperty);
+
+// الكتابة (مع rate limit)
+router.post('/', writeLimiter, controller.createProperty);
+router.put('/:id', writeLimiter, controller.updateProperty);
+router.delete('/:id', writeLimiter, controller.deleteProperty);
 
 module.exports = router;
