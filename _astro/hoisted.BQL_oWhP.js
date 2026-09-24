@@ -1,4 +1,4 @@
-import"./hoisted.Cdp8JXfm.js";const e=document.getElementById("contact-form"),n=document.getElementById("form-status");e?.addEventListener("submit",s=>{s.preventDefault();const t=new FormData(e),o=t.get("name"),m=t.get("phone"),a=t.get("email")||"غير محدد",c=t.get("subject"),d=t.get("message"),r=encodeURIComponent(`مرحباً،
+import"./hoisted.DfGtgCpL.js";const e=document.getElementById("contact-form"),n=document.getElementById("form-status");e?.addEventListener("submit",s=>{s.preventDefault();const t=new FormData(e),o=t.get("name"),m=t.get("phone"),a=t.get("email")||"غير محدد",c=t.get("subject"),d=t.get("message"),r=encodeURIComponent(`مرحباً،
 
 📝 طلب جديد من موقع عقار زين:
 
