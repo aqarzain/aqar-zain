@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg-warehouse" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="50%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#1e40af"/>
+    </linearGradient>
+    <pattern id="grid-warehouse" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bg-warehouse)"/>
+  <rect width="400" height="300" fill="url(#grid-warehouse)"/>
+
+  <!-- Emoji كبير -->
+  <text x="200" y="180" font-size="140" text-anchor="middle" dominant-baseline="middle" font-family="Apple Color Emoji, Segoe UI Emoji, sans-serif">
+    📦
+  </text>
+
+  <!-- اسم الفئة -->
+  <text x="200" y="260" font-size="28" font-weight="900" text-anchor="middle" fill="white" font-family="Cairo, sans-serif" opacity="0.95">
+    مستودع
+  </text>
+</svg>
