@@ -1,4 +1,4 @@
-import"./hoisted.DfGtgCpL.js";const d=document.querySelector(".smart-search-container");if(!d)throw new Error("No container");const p=d.dataset.api||"http://localhost:3000",i=document.getElementById("smart-search-input"),n=document.getElementById("smart-search-btn"),a=document.getElementById("smart-search-status"),o=document.getElementById("smart-search-results");document.querySelectorAll(".smart-search-example").forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.query||"";i.value=t,i.focus()})});function m(e){if(!e)return"السعر عند الطلب";const t=typeof e=="string"?parseFloat(e):e;return isNaN(t)?"السعر عند الطلب":t>=1e6?`${(t/1e6).toFixed(2)} مليون`:t>=1e3?`${Math.round(t/1e3)} ألف`:`${t} جنيه`}function x(e){return{شقة:"🏢",محل:"🏪",فيلا:"🏡",منزل:"🏠",أرض:"🌍",مكتب:"💼",مستودع:"📦"}[e||""]||"🏢"}function f(e){const t=[];return e.category&&t.push(`النوع: ${e.category}`),e.listing_type&&t.push(`العرض: ${e.listing_type}`),e.area_name&&t.push(`المنطقة: ${e.area_name}`),e.bedrooms&&t.push(`${e.bedrooms} غرف`),e.max_price&&t.push(`بحد أقصى ${(e.max_price/1e6).toFixed(1)} مليون`),e.min_price&&t.push(`بحد أدنى ${(e.min_price/1e6).toFixed(1)} مليون`),t.map(s=>`<span class="text-[11px] px-2.5 py-1 bg-gradient-to-r from-blue-100 to-blue-50 text-blue-800 rounded-full border border-blue-200 font-medium">${s}</span>`).join("")}async function c(){const e=i.value.trim();if(!e||e.length<3){alert("الرجاء إدخال نص بحث (3 أحرف على الأقل)");return}a.classList.remove("hidden"),a.innerHTML=`
+import"./hoisted.DfGtgCpL.js";const c=document.querySelector(".smart-search-container");if(!c)throw new Error("No container");const b=c.dataset.api||"http://localhost:3000",l=document.getElementById("smart-search-input"),n=document.getElementById("smart-search-btn"),a=document.getElementById("smart-search-status"),i=document.getElementById("smart-search-results");document.querySelectorAll(".smart-search-example").forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.query||"";l.value=t,l.focus()})});function m(e){if(!e)return"السعر عند الطلب";const t=typeof e=="string"?parseFloat(e):e;return isNaN(t)?"السعر عند الطلب":t>=1e6?`${(t/1e6).toFixed(2)} مليون`:t>=1e3?`${Math.round(t/1e3)} ألف`:`${t} جنيه`}function x(e){return{شقة:"🏢",محل:"🏪",فيلا:"🏡",منزل:"🏠",أرض:"🌍",مكتب:"💼",مستودع:"📦"}[e||""]||"🏢"}function f(e){const t=[];return e.category&&t.push(`النوع: ${e.category}`),e.listing_type&&t.push(`العرض: ${e.listing_type}`),e.area_name&&t.push(`المنطقة: ${e.area_name}`),e.bedrooms&&t.push(`${e.bedrooms} غرف`),e.max_price&&t.push(`بحد أقصى ${(e.max_price/1e6).toFixed(1)} مليون`),e.min_price&&t.push(`بحد أدنى ${(e.min_price/1e6).toFixed(1)} مليون`),t.map(s=>`<span class="text-[11px] px-2.5 py-1 bg-gradient-to-r from-blue-100 to-blue-50 text-blue-800 rounded-full border border-blue-200 font-medium">${s}</span>`).join("")}async function u(){const e=l.value.trim();if(!e||e.length<3){alert("الرجاء إدخال نص بحث (3 أحرف على الأقل)");return}a.classList.remove("hidden"),a.innerHTML=`
       <div class="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg p-3">
         <svg class="w-5 h-5 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -6,15 +6,15 @@ import"./hoisted.DfGtgCpL.js";const d=document.querySelector(".smart-search-cont
         </svg>
         <span class="text-sm text-blue-700 font-medium">🤖 جاري البحث بالذكاء الاصطناعي...</span>
       </div>
-    `,o.classList.add("hidden"),n.disabled=!0,n.style.opacity="0.6";try{const s=await(await fetch(`${p}/api/smart-search`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:e})})).json();if(!s.success){a.innerHTML=`<div class="text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 text-sm">❌ ${s.error||"حدث خطأ"}</div>`;return}const{entities:u,results:b,count:l}=s.data;a.innerHTML=`
+    `,i.classList.add("hidden"),n.disabled=!0,n.style.opacity="0.6";try{const s=await(await fetch(`${b}/api/smart-search`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:e})})).json();if(!s.success){a.innerHTML=`<div class="text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 text-sm">❌ ${s.error||"حدث خطأ"}</div>`;return}const{entities:d,results:p,count:o}=s.data;a.innerHTML=`
         <div class="bg-gradient-to-l from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-3">
           <div class="flex items-center gap-2 mb-2">
             <span class="text-base">🤖</span>
             <span class="text-xs font-bold text-blue-900">فهمت من طلبك:</span>
           </div>
-          <div class="flex flex-wrap gap-1.5">${f(u)}</div>
+          <div class="flex flex-wrap gap-1.5">${f(d)}</div>
         </div>
-      `,l===0?o.innerHTML=`
+      `,o===0?i.innerHTML=`
           <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center">
             <div class="text-3xl mb-2">🔍</div>
             <div class="text-sm font-bold text-yellow-900 mb-1">لا توجد نتائج مطابقة</div>
@@ -23,17 +23,17 @@ import"./hoisted.DfGtgCpL.js";const d=document.querySelector(".smart-search-cont
               تصفح كل العقارات →
             </a>
           </div>
-        `:o.innerHTML=`
+        `:i.innerHTML=`
           <div class="bg-white border border-gray-200 rounded-xl p-3 shadow-sm">
             <div class="flex items-center justify-between mb-3 pb-3 border-b border-gray-100">
               <div class="flex items-center gap-2">
                 <span class="text-sm">✅</span>
-                <span class="text-sm font-bold text-gray-800">وجدت <span class="text-blue-600">${l}</span> عقار</span>
+                <span class="text-sm font-bold text-gray-800">وجدت <span class="text-blue-600">${o}</span> عقار</span>
               </div>
-              ${l>6?'<a href="/aqar-zain/properties/" class="text-xs text-blue-600 hover:text-blue-700 font-bold">عرض الكل ←</a>':""}
+              ${o>6?'<a href="/aqar-zain/properties/" class="text-xs text-blue-600 hover:text-blue-700 font-bold">عرض الكل ←</a>':""}
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 max-h-[500px] overflow-y-auto">
-              ${b.slice(0,6).map(r=>`
+              ${p.slice(0,6).map(r=>`
                 <a href="/aqar-zain/properties/${r.id}/" class="group flex items-start gap-3 bg-gray-50 hover:bg-blue-50 border border-gray-100 hover:border-blue-300 rounded-lg p-3 transition shadow-sm">
                   <div class="w-12 h-12 flex-shrink-0 bg-gradient-to-br from-blue-500 to-blue-700 rounded-lg flex items-center justify-center text-2xl">
                     ${x(r.category)}
@@ -55,4 +55,4 @@ import"./hoisted.DfGtgCpL.js";const d=document.querySelector(".smart-search-cont
               `).join("")}
             </div>
           </div>
-        `,o.classList.remove("hidden")}catch(t){a.innerHTML=`<div class="text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 text-sm">❌ خطأ في الاتصال: ${t.message}</div>`}finally{n.disabled=!1,n.style.opacity="1"}}n.addEventListener("click",c);i.addEventListener("keydown",e=>{e.key==="Enter"&&(e.preventDefault(),c())});
+        `,i.classList.remove("hidden");try{window.dispatchEvent(new CustomEvent("smart-search",{detail:{query:e,count:o,entities:d}}))}catch{}}catch(t){a.innerHTML=`<div class="text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 text-sm">❌ خطأ في الاتصال: ${t.message}</div>`}finally{n.disabled=!1,n.style.opacity="1"}}n.addEventListener("click",u);l.addEventListener("keydown",e=>{e.key==="Enter"&&(e.preventDefault(),u())});

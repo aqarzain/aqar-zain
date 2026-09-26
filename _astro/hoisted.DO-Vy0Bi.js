@@ -1,4 +1,4 @@
-import"./hoisted.DfGtgCpL.js";const f="http://localhost:3000",p=document.getElementById("estimate-form"),x=document.getElementById("estimate-btn"),n=document.getElementById("estimate-result"),m=document.getElementById("estimate-loading"),l=document.getElementById("estimate-error");function g(s){return s?s>=1e6?`${(s/1e6).toFixed(2)} مليون جنيه`:s>=1e3?`${s.toLocaleString("ar-EG")} جنيه`:`${s} جنيه`:"—"}p?.addEventListener("submit",async s=>{s.preventDefault(),n.classList.add("hidden"),l.classList.add("hidden"),m.classList.remove("hidden"),x.disabled=!0;const t=new FormData(p),r={category:t.get("category"),listing_type:t.get("listing_type"),area_id:parseInt(t.get("area_id")),area_sqm:parseFloat(t.get("area_sqm"))};t.get("bedrooms")&&(r.bedrooms=parseInt(t.get("bedrooms"))),t.get("bathrooms")&&(r.bathrooms=parseInt(t.get("bathrooms"))),t.get("floor_number")!==""&&(r.floor_number=parseInt(t.get("floor_number"))),t.get("finishing_type")&&(r.finishing_type=t.get("finishing_type"));try{const o=await(await fetch(`${f}/api/estimate/ai`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(r)})).json();if(!o.success)throw new Error(o.error||"فشل التقدير");const{estimate:e,market_stats:b,similar_count:u,area_info:y}=o.data,i=Math.round((e.confidence||0)*100),a=i>=75?"green":i>=60?"yellow":"orange",h=a==="green"?"bg-green-50 border-green-200":a==="yellow"?"bg-yellow-50 border-yellow-200":"bg-orange-50 border-orange-200",_=a==="green"?"text-green-700":a==="yellow"?"text-yellow-700":"text-orange-700",v=r.listing_type==="إيجار"?"/شهر":"";n.innerHTML=`
+import"./hoisted.DfGtgCpL.js";const f="http://localhost:3000",p=document.getElementById("estimate-form"),x=document.getElementById("estimate-btn"),i=document.getElementById("estimate-result"),m=document.getElementById("estimate-loading"),l=document.getElementById("estimate-error");function c(s){return s?s>=1e6?`${(s/1e6).toFixed(2)} مليون جنيه`:s>=1e3?`${s.toLocaleString("ar-EG")} جنيه`:`${s} جنيه`:"—"}p?.addEventListener("submit",async s=>{s.preventDefault(),i.classList.add("hidden"),l.classList.add("hidden"),m.classList.remove("hidden"),x.disabled=!0;const t=new FormData(p),r={category:t.get("category"),listing_type:t.get("listing_type"),area_id:parseInt(t.get("area_id")),area_sqm:parseFloat(t.get("area_sqm"))};t.get("bedrooms")&&(r.bedrooms=parseInt(t.get("bedrooms"))),t.get("bathrooms")&&(r.bathrooms=parseInt(t.get("bathrooms"))),t.get("floor_number")!==""&&(r.floor_number=parseInt(t.get("floor_number"))),t.get("finishing_type")&&(r.finishing_type=t.get("finishing_type"));try{const o=await(await fetch(`${f}/api/estimate/ai`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(r)})).json();if(!o.success)throw new Error(o.error||"فشل التقدير");const{estimate:e,market_stats:b,similar_count:u,area_info:y}=o.data,d=Math.round((e.confidence||0)*100),a=d>=75?"green":d>=60?"yellow":"orange",h=a==="green"?"bg-green-50 border-green-200":a==="yellow"?"bg-yellow-50 border-yellow-200":"bg-orange-50 border-orange-200",_=a==="green"?"text-green-700":a==="yellow"?"text-yellow-700":"text-orange-700",v=r.listing_type==="إيجار"?"/شهر":"";i.innerHTML=`
         <div class="bg-gradient-to-br from-blue-50 via-white to-blue-50 border-2 border-blue-200 rounded-2xl shadow-lg overflow-hidden">
 
           <!-- Header -->
@@ -13,11 +13,11 @@ import"./hoisted.DfGtgCpL.js";const f="http://localhost:3000",p=document.getElem
           <div class="p-6 text-center border-b border-gray-100">
             <div class="text-xs text-gray-500 mb-2">💰 السعر المُقدّر</div>
             <div class="text-3xl md:text-4xl font-extrabold text-blue-700 mb-2">
-              ${g(e.estimated_price||0)}${v}
+              ${c(e.estimated_price||0)}${v}
             </div>
             ${e.min_price&&e.max_price?`
               <div class="text-xs text-gray-600">
-                النطاق المتوقع: <span class="font-bold text-gray-800">${g(e.min_price)}</span> - <span class="font-bold text-gray-800">${g(e.max_price)}</span>
+                النطاق المتوقع: <span class="font-bold text-gray-800">${c(e.min_price)}</span> - <span class="font-bold text-gray-800">${c(e.max_price)}</span>
               </div>
             `:""}
           </div>
@@ -32,7 +32,7 @@ import"./hoisted.DfGtgCpL.js";const f="http://localhost:3000",p=document.getElem
             `:""}
             <div class="text-center bg-white rounded-lg p-3 border border-gray-100">
               <div class="text-xs text-gray-500 mb-1">🎯 الثقة</div>
-              <div class="text-sm font-bold text-gray-800">${i}%</div>
+              <div class="text-sm font-bold text-gray-800">${d}%</div>
             </div>
             ${b?.count?`
               <div class="text-center bg-white rounded-lg p-3 border border-gray-100">
@@ -70,7 +70,7 @@ import"./hoisted.DfGtgCpL.js";const f="http://localhost:3000",p=document.getElem
                 <div class="bg-green-50 rounded-lg p-3 border border-green-100">
                   <div class="text-xs font-bold text-green-800 mb-2">✅ عوامل رفعت السعر:</div>
                   <ul class="space-y-1">
-                    ${e.factors.positive.map(d=>`<li class="text-[11px] text-green-700 flex items-start gap-1"><span>•</span><span>${d}</span></li>`).join("")}
+                    ${e.factors.positive.map(n=>`<li class="text-[11px] text-green-700 flex items-start gap-1"><span>•</span><span>${n}</span></li>`).join("")}
                   </ul>
                 </div>
               `:""}
@@ -78,7 +78,7 @@ import"./hoisted.DfGtgCpL.js";const f="http://localhost:3000",p=document.getElem
                 <div class="bg-orange-50 rounded-lg p-3 border border-orange-100">
                   <div class="text-xs font-bold text-orange-800 mb-2">⚠️ عوامل خفضت السعر:</div>
                   <ul class="space-y-1">
-                    ${e.factors.negative.map(d=>`<li class="text-[11px] text-orange-700 flex items-start gap-1"><span>•</span><span>${d}</span></li>`).join("")}
+                    ${e.factors.negative.map(n=>`<li class="text-[11px] text-orange-700 flex items-start gap-1"><span>•</span><span>${n}</span></li>`).join("")}
                   </ul>
                 </div>
               `:""}
@@ -99,4 +99,4 @@ import"./hoisted.DfGtgCpL.js";const f="http://localhost:3000",p=document.getElem
           </div>
 
         </div>
-      `,n.classList.remove("hidden"),setTimeout(()=>{n.scrollIntoView({behavior:"smooth",block:"start"})},100)}catch(c){l.innerHTML=`❌ ${c.message}`,l.classList.remove("hidden")}finally{m.classList.add("hidden"),x.disabled=!1}});
+      `,i.classList.remove("hidden");try{window.dispatchEvent(new CustomEvent("estimate-completed",{detail:{category:r.category,price:e.estimated_price}}))}catch{}setTimeout(()=>{i.scrollIntoView({behavior:"smooth",block:"start"})},100)}catch(g){l.innerHTML=`❌ ${g.message}`,l.classList.remove("hidden")}finally{m.classList.add("hidden"),x.disabled=!1}});
